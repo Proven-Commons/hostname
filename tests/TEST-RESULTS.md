@@ -3,7 +3,7 @@
 Written by `tests/run_tests.py`. Rerun it to check these numbers.
 
 - Lean: Lean (version 4.35.0, x86_64-unknown-linux-gnu, commit eb6cafb7290e8bd5f2937522d8d804f58f02bafc, Release)
-- Model of the specification: `spec_model` in `tests/run_tests.py`
+- Oracle: the model of the specification, `spec_model` in `tests/run_tests.py`, and Go, OpenSSL and pyca/cryptography, as below
 - Go oracle: `crypto/x509` `Certificate.VerifyHostname`, go version go1.24.7 linux/amd64
 - OpenSSL oracle: `X509_check_host`, OpenSSL 3.0.13 30 Jan 2024, with `X509_CHECK_FLAG_NO_PARTIAL_WILDCARDS` and `X509_CHECK_FLAG_NEVER_CHECK_SUBJECT`
 - pyca/cryptography oracle: its X.509 verifier, version 50.0.1, on Python 3.13.17

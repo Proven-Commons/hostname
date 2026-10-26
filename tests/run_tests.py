@@ -768,7 +768,7 @@ def main():
     args = ap.parse_args()
 
     def give_up(why):
-        write(["# Test results", "", f"- Seed: {args.seed}", "- Inputs: 0",
+        write(["# Test results", "", "- Oracle: none ran", f"- Seed: {args.seed}", "- Inputs: 0",
                f"- Failures: 1 ({why})", ""])
         sys.exit(why)
 
@@ -861,7 +861,8 @@ def main():
         "Written by `tests/run_tests.py`. Rerun it to check these numbers.",
         "",
         f"- Lean: {lean_version()}",
-        "- Model of the specification: `spec_model` in `tests/run_tests.py`",
+        "- Oracle: the model of the specification, `spec_model` in `tests/run_tests.py`, "
+        "and Go, OpenSSL and pyca/cryptography, as below",
         f"- Go oracle: `crypto/x509` `Certificate.VerifyHostname`, {go_version()}",
         f"- OpenSSL oracle: `X509_check_host`, {openssl.version}, with "
         "`X509_CHECK_FLAG_NO_PARTIAL_WILDCARDS` and `X509_CHECK_FLAG_NEVER_CHECK_SUBJECT`",
