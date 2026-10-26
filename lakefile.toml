@@ -1,0 +1,16 @@
+name = "hostname"
+version = "0.1.0"
+defaultTargets = ["Hostname", "Spec", "Proofs", "hostname"]
+
+[[lean_lib]]
+name = "Hostname"
+
+[[lean_lib]]
+name = "Spec"
+
+[[lean_lib]]
+name = "Proofs"
+
+[[lean_exe]]
+name = "hostname"
+root = "Main"
