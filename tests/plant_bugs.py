@@ -66,9 +66,9 @@ def failures(copy, count):
     run = subprocess.run([sys.executable, "tests/run_tests.py", "--count", str(count)],
                          cwd=copy, capture_output=True, text=True)
     text = (copy / "tests" / "TEST-RESULTS.md").read_text(encoding="utf-8")
-    m = re.search(r"^- Failures: (\d+)", text, re.M)
-    if m is None:
-        return None, run.stdout + run.stderr
+    m = re.search(r"^- Failures: (\d+)(.*)$", text, re.M)
+    if m is None or "build" in m.group(2):
+        return None, run.stdout + run.stderr  # the bug did not build: not a catch
     return int(m.group(1)), None
 
 
@@ -96,13 +96,13 @@ def main():
             rows.append((what, n))
             if not n:
                 missed += 1
-            print(f"{what}: {n} failures" + (f"\n{err}" if err else ""))
+            print(f"{what}: {n} failures" + (" (did not build)" if err else ""))
     lines = ["# Planted bugs", "",
              "Written by `tests/plant_bugs.py`. Each bug is a one-line change to "
              f"`{CODE}`, tested with `tests/run_tests.py --count {args.count}`. "
              "Every bug must give failures, and the unchanged code none.", "",
              "| Planted bug | Failures |", "|---|---|"]
-    lines += [f"| {what} | {'(no result)' if n is None else n} |" for what, n in rows]
+    lines += [f"| {what} | {'did not build' if n is None else n} |" for what, n in rows]
     lines += ["", f"Bugs caught: {sum(1 for what, n in rows[1:] if n)} of {len(BUGS)}", ""]
     RECORD.write_text("\n".join(lines), encoding="utf-8")
     return 1 if missed else 0
