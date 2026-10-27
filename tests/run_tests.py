@@ -815,9 +815,10 @@ def main():
                                 [f"{r.encode().hex()} {p.encode().hex()}\n"
                                  for (r, p), _, _ in pairs])
     if problem or len(go_out) != len(pairs):
-        failures.append(("(Go oracle run)", "a clean run",
-                         problem or f"{len(go_out)} answers for {len(pairs)} pairs"))
-        go_out = ["?"] * len(pairs)
+        # Not a failure of the tool: the run gives up, so that a planted
+        # bug is not counted as caught by an oracle that crashed.
+        give_up("the Go oracle run failed: "
+                + (problem or f"{len(go_out)} answers for {len(pairs)} pairs"))
     oracles = ["Go", "OpenSSL", "pyca/cryptography"]
     strict = 0
     strict_matches = 0

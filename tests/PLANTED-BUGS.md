@@ -1,6 +1,6 @@
 # Planted bugs
 
-Written by `tests/plant_bugs.py`. Each bug is a one-line change to `Hostname/Basic.lean`, tested with `tests/run_tests.py --count 2000`. Every bug must give failures, and the unchanged code none.
+Written by `tests/plant_bugs.py`. Each bug is a one-line change to `Hostname/Basic.lean`, tested with `tests/run_tests.py --count 2000`. Every bug must give failures, and the unchanged code none. A run that gives up, because the code did not build or an oracle could not be run, counts as missed.
 
 | Planted bug | Failures |
 |---|---|
