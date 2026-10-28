@@ -1,0 +1,15 @@
+{
+  "challenge_module": "Spec",
+  "solution_module": "Proofs",
+  "theorem_names": [
+    "Spec.matchName_iff", "Spec.validReference_iff", "Spec.validPresented_iff",
+    "Spec.verify_iff", "Spec.wildcard_leftmost_only", "Spec.wildcard_one_label",
+    "Spec.wildcard_two_labels", "Spec.matchName_case_left", "Spec.matchName_case_right",
+    "Spec.matchName_ascii_left", "Spec.matchName_ascii_right", "Spec.matchName_exact",
+    "Spec.matchName_refl", "Spec.matchName_symm", "Spec.matchName_trans",
+    "Spec.rfc9525_examples", "Spec.rfc6125_examples", "Spec.limbo_vectors",
+    "Spec.public_suffix_limit", "Spec.reject_vectors", "Spec.accept_vectors",
+    "Spec.length_vectors"
+  ],
+  "permitted_axioms": ["propext", "Quot.sound", "Classical.choice"]
+}
