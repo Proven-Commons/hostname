@@ -1,4 +1,5 @@
 name = "hostname"
+license = "Apache-2.0"
 version = "0.1.0"
 defaultTargets = ["Hostname", "Spec", "Proofs", "hostname"]
 
