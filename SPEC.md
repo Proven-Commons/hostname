@@ -2,7 +2,7 @@
 
 A TLS client connects to a server it names, such as `www.example.com`, and the server shows a certificate listing the DNS names it may answer for. The client must check that one of those names covers the one it meant. This library makes that check, as RFC 9525, section 6.3, sets it out (https://www.rfc-editor.org/rfc/rfc9525#section-6.3). RFC 9525 replaced RFC 6125 in 2023.
 
-The name the client meant is the *reference identifier*. A name in the certificate is a *presented identifier*. A reviewer who did not write this specification approves it. The approval also covers `Spec.lean`, `Spec/Defs.lean`, and the other files `bar.toml` lists.
+The name the client meant is the *reference identifier*. A name in the certificate is a *presented identifier*. A reviewer who did not write this specification approves it. The approval also covers `Hostname/Spec.lean`, `Hostname/Spec/Defs.lean`, and the other files `bar.toml` lists.
 
 ## Names
 
@@ -58,27 +58,27 @@ Every answer comes from `matchName`, `validReference`, `validPresented` and `ver
 
 ## What must always hold
 
-Each property is a theorem in `Spec.lean`, under the name given. The definitions the statements use are in `Spec/Defs.lean`. They are written from the RFCs, separately from the code.
+Each property is a theorem in `Hostname/Spec.lean`, under the name given. The definitions the statements use are in `Hostname/Spec/Defs.lean`. They are written from the RFCs, separately from the code.
 
 | Property | Theorem |
 |----------|---------|
-| `matchName` is true exactly when the rules above say the names match, as `Spec.Matches` states them. | `Spec.matchName_iff` |
-| `validReference` and `validPresented` accept exactly the well formed identifiers. | `Spec.validReference_iff`, `Spec.validPresented_iff` |
-| `verify` is true exactly when some presented identifier matches some reference identifier. | `Spec.verify_iff` |
-| A presented identifier holding `*` matches only when it starts with `*.` and holds no other `*`. | `Spec.wildcard_leftmost_only` |
-| A wildcard stands for exactly one label. | `Spec.wildcard_one_label` |
-| A wildcard over one label, such as `*.com`, matches nothing. | `Spec.wildcard_two_labels` |
-| Changing the ASCII case of either identifier changes no answer. | `Spec.matchName_case_left`, `Spec.matchName_case_right` |
-| An identifier holding a character outside ASCII matches nothing. | `Spec.matchName_ascii_left`, `Spec.matchName_ascii_right` |
-| Without a wildcard, matching is sameness with ASCII case ignored. | `Spec.matchName_exact` |
-| Every host name matches itself. Matching is symmetric for names with no wildcard or trailing dot, and it chains. | `Spec.matchName_refl`, `Spec.matchName_symm`, `Spec.matchName_trans` |
-| The examples of RFC 9525 and RFC 6125. | `Spec.rfc9525_examples`, `Spec.rfc6125_examples` |
-| The name checks of x509-limbo, with the answers the suite expects. | `Spec.limbo_vectors` |
-| The two x509-limbo cases this library does not catch: wildcards over a public suffix of two labels. | `Spec.public_suffix_limit` |
-| Malformed names and pairs that must not match, and pairs that must. | `Spec.reject_vectors`, `Spec.accept_vectors` |
-| The length limits: 63 characters to a label, 253 to a name. | `Spec.length_vectors` |
+| `matchName` is true exactly when the rules above say the names match, as `Hostname.Spec.Matches` states them. | `Hostname.Spec.matchName_iff` |
+| `validReference` and `validPresented` accept exactly the well formed identifiers. | `Hostname.Spec.validReference_iff`, `Hostname.Spec.validPresented_iff` |
+| `verify` is true exactly when some presented identifier matches some reference identifier. | `Hostname.Spec.verify_iff` |
+| A presented identifier holding `*` matches only when it starts with `*.` and holds no other `*`. | `Hostname.Spec.wildcard_leftmost_only` |
+| A wildcard stands for exactly one label. | `Hostname.Spec.wildcard_one_label` |
+| A wildcard over one label, such as `*.com`, matches nothing. | `Hostname.Spec.wildcard_two_labels` |
+| Changing the ASCII case of either identifier changes no answer. | `Hostname.Spec.matchName_case_left`, `Hostname.Spec.matchName_case_right` |
+| An identifier holding a character outside ASCII matches nothing. | `Hostname.Spec.matchName_ascii_left`, `Hostname.Spec.matchName_ascii_right` |
+| Without a wildcard, matching is sameness with ASCII case ignored. | `Hostname.Spec.matchName_exact` |
+| Every host name matches itself. Matching is symmetric for names with no wildcard or trailing dot, and it chains. | `Hostname.Spec.matchName_refl`, `Hostname.Spec.matchName_symm`, `Hostname.Spec.matchName_trans` |
+| The examples of RFC 9525 and RFC 6125. | `Hostname.Spec.rfc9525_examples`, `Hostname.Spec.rfc6125_examples` |
+| The name checks of x509-limbo, with the answers the suite expects. | `Hostname.Spec.limbo_vectors` |
+| The two x509-limbo cases this library does not catch: wildcards over a public suffix of two labels. | `Hostname.Spec.public_suffix_limit` |
+| Malformed names and pairs that must not match, and pairs that must. | `Hostname.Spec.reject_vectors`, `Hostname.Spec.accept_vectors` |
+| The length limits: 63 characters to a label, 253 to a name. | `Hostname.Spec.length_vectors` |
 
-Together, these fix every output. `matchName` is fixed for every pair of strings by `Spec.matchName_iff`, and the validity checks and `verify` are fixed by their own theorems. The other statements follow from those. They state, in the plainest words, the properties a reader will look for.
+Together, these fix every output. `matchName` is fixed for every pair of strings by `Hostname.Spec.matchName_iff`, and the validity checks and `verify` are fixed by their own theorems. The other statements follow from those. They state, in the plainest words, the properties a reader will look for.
 
 ## Oracles
 

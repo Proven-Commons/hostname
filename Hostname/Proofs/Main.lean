@@ -1,13 +1,13 @@
 /-
-  The proofs of the statements in `Spec.lean`, under the same names.
-  Each statement is copied from `Spec.lean` word for word; `lake
-  comparator` checks that they match. The work is in `Proofs/`; the
+  The proofs of the statements in `Hostname/Spec.lean`, under the same names.
+  Each statement is copied from `Hostname/Spec.lean` word for word; `lake
+  comparator` checks that they match. The work is in `Hostname/Proofs/`; the
   test vectors are checked by the kernel with `decide`.
 -/
 
 import Hostname
-import Spec.Defs
-import Proofs.Match
+import Hostname.Spec.Defs
+import Hostname.Proofs.Match
 
 open Hostname
 
@@ -16,26 +16,26 @@ open Hostname
 
 /-- `matchName r p` is true exactly when the presented identifier `p`
     matches the reference identifier `r` by RFC 9525, section 6.3, as
-    `Spec.Matches` sets it out. -/
-theorem Spec.matchName_iff (r p : String) : matchName r p = true ↔ Spec.Matches r p :=
+    `Hostname.Spec.Matches` sets it out. -/
+theorem Hostname.Spec.matchName_iff (r p : String) : matchName r p = true ↔ Hostname.Spec.Matches r p :=
   Hostname.Proofs.matchName_iff' r p
 
 /-- `validReference` accepts exactly the well formed reference
     identifiers. -/
-theorem Spec.validReference_iff (r : String) :
-    validReference r = true ↔ Spec.ValidReference r :=
+theorem Hostname.Spec.validReference_iff (r : String) :
+    validReference r = true ↔ Hostname.Spec.ValidReference r :=
   Hostname.Proofs.validReference_iff' r
 
 /-- `validPresented` accepts exactly the well formed presented
     identifiers. -/
-theorem Spec.validPresented_iff (p : String) :
-    validPresented p = true ↔ Spec.ValidPresented p :=
+theorem Hostname.Spec.validPresented_iff (p : String) :
+    validPresented p = true ↔ Hostname.Spec.ValidPresented p :=
   Hostname.Proofs.validPresented_iff' p
 
 /-- `verify` succeeds exactly when some presented identifier matches
     some reference identifier (RFC 9525, section 6.2). -/
-theorem Spec.verify_iff (rs ps : List String) :
-    verify rs ps = true ↔ ∃ r ∈ rs, ∃ p ∈ ps, Spec.Matches r p :=
+theorem Hostname.Spec.verify_iff (rs ps : List String) :
+    verify rs ps = true ↔ ∃ r ∈ rs, ∃ p ∈ ps, Hostname.Spec.Matches r p :=
   Hostname.Proofs.verify_iff' rs ps
 
 /-! ## Wildcards -/
@@ -44,7 +44,7 @@ theorem Spec.verify_iff (rs ps : List String) :
     it starts with `*.` and holds no other `*`. So two wildcards, a
     partial wildcard such as `f*.example.com`, and a wildcard outside
     the left-most label, as in `foo.*.example.com`, match nothing. -/
-theorem Spec.wildcard_leftmost_only (r p : String) (h : matchName r p = true)
+theorem Hostname.Spec.wildcard_leftmost_only (r p : String) (h : matchName r p = true)
     (hs : '*' ∈ p.toList) : ∃ s, p.toList = '*' :: '.' :: s ∧ '*' ∉ s :=
   Hostname.Proofs.wildcard_leftmost_only' r p h hs
 
@@ -52,14 +52,14 @@ theorem Spec.wildcard_leftmost_only (r p : String) (h : matchName r p = true)
     the reference name is one label, a dot, and `s` with ASCII case
     ignored. So `*.example.com` matches neither `example.com` nor
     `a.b.example.com`. -/
-theorem Spec.wildcard_one_label (r : String) (s : List Char)
+theorem Hostname.Spec.wildcard_one_label (r : String) (s : List Char)
     (h : matchName r (String.ofList ('*' :: '.' :: s)) = true) :
-    ∃ label rest, Spec.Label label ∧ Spec.Same rest s ∧
+    ∃ label rest, Hostname.Spec.Label label ∧ Hostname.Spec.Same rest s ∧
       (r.toList = label ++ '.' :: rest ∨ r.toList = label ++ '.' :: rest ++ ['.']) :=
   Hostname.Proofs.wildcard_one_label' r s h
 
 /-- A wildcard over a single label, such as `*.com`, matches nothing. -/
-theorem Spec.wildcard_two_labels (r : String) (s : List Char)
+theorem Hostname.Spec.wildcard_two_labels (r : String) (s : List Char)
     (h : matchName r (String.ofList ('*' :: '.' :: s)) = true) : '.' ∈ s :=
   Hostname.Proofs.wildcard_two_labels' r s h
 
@@ -67,26 +67,26 @@ theorem Spec.wildcard_two_labels (r : String) (s : List Char)
 
 /-- Changing the ASCII case of the reference identifier changes no
     answer. -/
-theorem Spec.matchName_case_left (r r' p : String) (h : Spec.Same r.toList r'.toList) :
+theorem Hostname.Spec.matchName_case_left (r r' p : String) (h : Hostname.Spec.Same r.toList r'.toList) :
     matchName r p = matchName r' p :=
   Hostname.Proofs.matchName_case_left' r r' p h
 
 /-- Changing the ASCII case of the presented identifier changes no
     answer. -/
-theorem Spec.matchName_case_right (r p p' : String) (h : Spec.Same p.toList p'.toList) :
+theorem Hostname.Spec.matchName_case_right (r p p' : String) (h : Hostname.Spec.Same p.toList p'.toList) :
     matchName r p = matchName r p' :=
   Hostname.Proofs.matchName_case_right' r p p' h
 
 /-- A reference identifier holding a character outside ASCII matches
     nothing: U-labels must be turned into A-labels first, and no
     Unicode case folding applies. -/
-theorem Spec.matchName_ascii_left (r p : String) (h : ∃ c ∈ r.toList, 127 < c.toNat) :
+theorem Hostname.Spec.matchName_ascii_left (r p : String) (h : ∃ c ∈ r.toList, 127 < c.toNat) :
     matchName r p = false :=
   Hostname.Proofs.matchName_ascii_left' r p h
 
 /-- A presented identifier holding a character outside ASCII matches
     nothing. -/
-theorem Spec.matchName_ascii_right (r p : String) (h : ∃ c ∈ p.toList, 127 < c.toNat) :
+theorem Hostname.Spec.matchName_ascii_right (r p : String) (h : ∃ c ∈ p.toList, 127 < c.toNat) :
     matchName r p = false :=
   Hostname.Proofs.matchName_ascii_right' r p h
 
@@ -95,24 +95,24 @@ theorem Spec.matchName_ascii_right (r p : String) (h : ∃ c ∈ p.toList, 127 <
 /-- Without a wildcard, matching is sameness with ASCII case ignored:
     `p` matches `r` exactly when both are well formed and `p` is the
     reference name with ASCII case ignored. -/
-theorem Spec.matchName_exact (r p : String) (hs : '*' ∉ p.toList) :
+theorem Hostname.Spec.matchName_exact (r p : String) (hs : '*' ∉ p.toList) :
     matchName r p = true ↔
-      Spec.ExactName p ∧ ∃ name, Spec.Reference r name ∧ Spec.Same name p.toList :=
+      Hostname.Spec.ExactName p ∧ ∃ name, Hostname.Spec.Reference r name ∧ Hostname.Spec.Same name p.toList :=
   Hostname.Proofs.matchName_exact' r p hs
 
 /-- Every host name matches itself. -/
-theorem Spec.matchName_refl (s : String) (h : Spec.HostName s.toList) : matchName s s = true :=
+theorem Hostname.Spec.matchName_refl (s : String) (h : Hostname.Spec.HostName s.toList) : matchName s s = true :=
   Hostname.Proofs.matchName_refl' s h
 
 /-- Swapping two names without a wildcard or a trailing dot keeps a
     match. -/
-theorem Spec.matchName_symm (r p : String) (h : matchName r p = true) (hs : '*' ∉ p.toList)
+theorem Hostname.Spec.matchName_symm (r p : String) (h : matchName r p = true) (hs : '*' ∉ p.toList)
     (hd : r.toList.getLast? ≠ some '.') : matchName p r = true :=
   Hostname.Proofs.matchName_symm' r p h hs hd
 
 /-- Matching chains: when `b` matches `a` and `c` matches `b`, `c`
     matches `a`. -/
-theorem Spec.matchName_trans (a b c : String) (hab : matchName a b = true)
+theorem Hostname.Spec.matchName_trans (a b c : String) (hab : matchName a b = true)
     (hbc : matchName b c = true) : matchName a c = true :=
   Hostname.Proofs.matchName_trans' a b c hab hbc
 
@@ -120,7 +120,7 @@ theorem Spec.matchName_trans (a b c : String) (hab : matchName a b = true)
 
 /-- The examples of RFC 9525: section 6.3 on case, section 6.1.2 on a
     label that differs, and section 7.1 on wildcards. -/
-theorem Spec.rfc9525_examples :
+theorem Hostname.Spec.rfc9525_examples :
     matchName "www.bigcompany.example" "WWW.BigCompany.Example" = true ∧
     matchName "WWW.BigCompany.Example" "www.bigcompany.example" = true ∧
     matchName "www.bigcompany.example" "web.bigcompany.example" = false ∧
@@ -134,7 +134,7 @@ theorem Spec.rfc9525_examples :
 /-- The wildcard examples of RFC 6125, section 6.4.3, which RFC 9525
     replaced. A wildcard matches one label only, and the partial
     wildcards RFC 6125 left to the client are turned away. -/
-theorem Spec.rfc6125_examples :
+theorem Hostname.Spec.rfc6125_examples :
     matchName "foo.example.com" "*.example.com" = true ∧
     matchName "bar.foo.example.com" "*.example.com" = false ∧
     matchName "example.com" "*.example.com" = false ∧
@@ -145,7 +145,7 @@ theorem Spec.rfc6125_examples :
 
 /-- The name checks of the x509-limbo test suite (groups `webpki::san`
     and `rfc5280::san`), each with the answer the suite expects. -/
-theorem Spec.limbo_vectors :
+theorem Hostname.Spec.limbo_vectors :
     matchName "example.com" "example.com" = true ∧
     matchName "example2.com" "example.com" = false ∧
     matchName "def.example.com" "abc.example.com" = false ∧
@@ -167,13 +167,13 @@ theorem Spec.limbo_vectors :
 /-- What this library does not catch: a wildcard over a public suffix
     of two or more labels. x509-limbo expects both to fail, which needs
     the Public Suffix List. -/
-theorem Spec.public_suffix_limit :
+theorem Hostname.Spec.public_suffix_limit :
     matchName "example.co.uk" "*.co.uk" = true ∧
     matchName "example.s3.amazonaws.com" "*.s3.amazonaws.com" = true := by
   decide +kernel
 
 /-- Names that are not well formed, and pairs that must not match. -/
-theorem Spec.reject_vectors :
+theorem Hostname.Spec.reject_vectors :
     matchName "Key.example" "key.example" = false ∧
     matchName "key.example" "Key.example" = false ∧
     matchName "example.com" "example.com." = false ∧
@@ -200,7 +200,7 @@ theorem Spec.reject_vectors :
 /-- Pairs that must match: case, a trailing dot on the reference, a
     digit first, a one-label name, A-labels, and hyphens inside a
     label. -/
-theorem Spec.accept_vectors :
+theorem Hostname.Spec.accept_vectors :
     matchName "FOO.Example.COM" "*.example.com" = true ∧
     matchName "foo.example.com" "*.EXAMPLE.com" = true ∧
     matchName "foo.example.com." "*.example.com" = true ∧
@@ -216,7 +216,7 @@ theorem Spec.accept_vectors :
 
 /-- The length limits: a label of 63 characters and a name of 253 are
     accepted; a label of 64 and a name of 254 are not. -/
-theorem Spec.length_vectors :
+theorem Hostname.Spec.length_vectors :
     validReference (String.ofList (List.replicate 63 'a' ++ ".example".toList)) = true ∧
     validReference (String.ofList (List.replicate 64 'a' ++ ".example".toList)) = false ∧
     validReference (String.ofList

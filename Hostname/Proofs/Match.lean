@@ -1,14 +1,14 @@
 /-
   Matching: `validReference`, `validPresented` and `matchName` against
-  `Spec.ValidReference`, `Spec.ValidPresented` and `Spec.Matches`, and
+  `Hostname.Spec.ValidReference`, `Hostname.Spec.ValidPresented` and `Hostname.Spec.Matches`, and
   the laws that follow.
 -/
 
 import Hostname
-import Spec.Defs
-import Proofs.Chars
-import Proofs.Lists
-import Proofs.Names
+import Hostname.Spec.Defs
+import Hostname.Proofs.Chars
+import Hostname.Proofs.Lists
+import Hostname.Proofs.Names
 
 open Hostname
 
@@ -18,17 +18,17 @@ namespace Hostname.Proofs
 
 /-- The host name a reference identifier gives is what `dropDot`
     leaves. -/
-theorem reference_dropDot {r : String} {name : List Char} (h : Spec.Reference r name) :
+theorem reference_dropDot {r : String} {name : List Char} (h : Hostname.Spec.Reference r name) :
     dropDot r.toList = name := by
   rcases h with ⟨hn, h | h⟩
   · rw [h]; exact dropDot_of_getLast (hostName_getLast hn)
   · rw [h]; exact dropDot_append_dot name
 
 theorem reference_of_valid {r : String} (h : validReference r = true) :
-    Spec.Reference r (dropDot r.toList) :=
+    Hostname.Spec.Reference r (dropDot r.toList) :=
   ⟨(validName_iff _).mp h, eq_dropDot _⟩
 
-theorem validReference_iff' (r : String) : validReference r = true ↔ Spec.ValidReference r := by
+theorem validReference_iff' (r : String) : validReference r = true ↔ Hostname.Spec.ValidReference r := by
   constructor
   · intro h; exact ⟨_, reference_of_valid h⟩
   · rintro ⟨name, h⟩
@@ -38,7 +38,7 @@ theorem validReference_iff' (r : String) : validReference r = true ↔ Spec.Vali
 
 /-! ## Presented identifiers -/
 
-theorem hostName_wildcardSuffix {cs : List Char} (h : Spec.HostName cs) :
+theorem hostName_wildcardSuffix {cs : List Char} (h : Hostname.Spec.HostName cs) :
     wildcardSuffix? cs = none := by
   rw [wildcardSuffix?_eq_none]
   intro s hs
@@ -48,21 +48,21 @@ theorem hostName_wildcardSuffix {cs : List Char} (h : Spec.HostName cs) :
   exact not_letDig_star ha
 
 theorem exactName_of_none {p : String} (hw : wildcardSuffix? p.toList = none)
-    (h : Spec.ValidPresented p) : Spec.ExactName p := by
+    (h : Hostname.Spec.ValidPresented p) : Hostname.Spec.ExactName p := by
   rcases h with h | ⟨s, hs⟩
   · exact h
   · rw [wildcardSuffix?_eq_some.mpr hs.1] at hw; cases hw
 
 theorem wildcardName_of_some {p : String} {s : List Char} (hw : wildcardSuffix? p.toList = some s)
-    (h : Spec.ValidPresented p) : Spec.WildcardName p s := by
+    (h : Hostname.Spec.ValidPresented p) : Hostname.Spec.WildcardName p s := by
   rcases h with h | ⟨s', hs⟩
   · rw [hostName_wildcardSuffix h] at hw; cases hw
   · rw [wildcardSuffix?_eq_some.mpr hs.1] at hw
     cases hw
     exact hs
 
-theorem validPresented_iff' (p : String) : validPresented p = true ↔ Spec.ValidPresented p := by
-  unfold validPresented Spec.ValidPresented Spec.ExactName
+theorem validPresented_iff' (p : String) : validPresented p = true ↔ Hostname.Spec.ValidPresented p := by
+  unfold validPresented Hostname.Spec.ValidPresented Hostname.Spec.ExactName
   cases hw : wildcardSuffix? p.toList with
   | some s =>
     have hp := wildcardSuffix?_eq_some.mp hw
@@ -88,7 +88,7 @@ theorem validPresented_iff' (p : String) : validPresented p = true ↔ Spec.Vali
 
 /-! ## Matching -/
 
-theorem matchName_iff' (r p : String) : matchName r p = true ↔ Spec.Matches r p := by
+theorem matchName_iff' (r p : String) : matchName r p = true ↔ Hostname.Spec.Matches r p := by
   unfold matchName
   simp only [Bool.and_eq_true]
   constructor
@@ -123,7 +123,7 @@ theorem matchName_iff' (r p : String) : matchName r p = true ↔ Spec.Matches r 
         exact (sameIgnoringCase_iff _ _).mpr hsame
 
 theorem verify_iff' (rs ps : List String) :
-    verify rs ps = true ↔ ∃ r ∈ rs, ∃ p ∈ ps, Spec.Matches r p := by
+    verify rs ps = true ↔ ∃ r ∈ rs, ∃ p ∈ ps, Hostname.Spec.Matches r p := by
   simp [verify, List.any_eq_true, matchName_iff']
 
 /-! ## Wildcards -/
@@ -137,8 +137,8 @@ theorem wildcard_leftmost_only' (r p : String) (h : matchName r p = true)
 
 theorem wildcard_parts {r : String} {s : List Char}
     (h : matchName r (String.ofList ('*' :: '.' :: s)) = true) :
-    ∃ name label rest, Spec.Reference r name ∧ name = label ++ '.' :: rest ∧
-      Spec.Label label ∧ Spec.Same rest s ∧ '.' ∈ s := by
+    ∃ name label rest, Hostname.Spec.Reference r name ∧ name = label ++ '.' :: rest ∧
+      Hostname.Spec.Label label ∧ Hostname.Spec.Same rest s ∧ '.' ∈ s := by
   obtain ⟨name, hname, h⟩ := (matchName_iff' _ _).mp h
   rcases h with ⟨hex, _⟩ | ⟨s', label, rest, hw, heq, hl, hsame⟩
   · have := hostName_wildcardSuffix hex
@@ -152,7 +152,7 @@ theorem wildcard_parts {r : String} {s : List Char}
 
 theorem wildcard_one_label' (r : String) (s : List Char)
     (h : matchName r (String.ofList ('*' :: '.' :: s)) = true) :
-    ∃ label rest, Spec.Label label ∧ Spec.Same rest s ∧
+    ∃ label rest, Hostname.Spec.Label label ∧ Hostname.Spec.Same rest s ∧
       (r.toList = label ++ '.' :: rest ∨ r.toList = label ++ '.' :: rest ++ ['.']) := by
   obtain ⟨name, label, rest, hname, rfl, hl, hsame, _⟩ := wildcard_parts h
   exact ⟨label, rest, hl, hsame, hname.2⟩
@@ -208,21 +208,21 @@ theorem matchName_lower_right (r p : String) : matchName r (lowerStr p) = matchN
   cases wildcardSuffix? p.toList <;>
     simp only [Option.map_none, Option.map_some, sameIgnoringCase_lower_right]
 
-theorem lowerStr_eq_of_same {s s' : String} (h : Spec.Same s.toList s'.toList) :
+theorem lowerStr_eq_of_same {s s' : String} (h : Hostname.Spec.Same s.toList s'.toList) :
     lowerStr s = lowerStr s' := by
   unfold lowerStr; rw [same_iff.mp h]
 
-theorem matchName_case_left' (r r' p : String) (h : Spec.Same r.toList r'.toList) :
+theorem matchName_case_left' (r r' p : String) (h : Hostname.Spec.Same r.toList r'.toList) :
     matchName r p = matchName r' p := by
   rw [← matchName_lower_left r, ← matchName_lower_left r', lowerStr_eq_of_same h]
 
-theorem matchName_case_right' (r p p' : String) (h : Spec.Same p.toList p'.toList) :
+theorem matchName_case_right' (r p p' : String) (h : Hostname.Spec.Same p.toList p'.toList) :
     matchName r p = matchName r p' := by
   rw [← matchName_lower_right r p, ← matchName_lower_right r p', lowerStr_eq_of_same h]
 
 /-! ## ASCII only -/
 
-theorem hostName_ascii {cs : List Char} (h : Spec.HostName cs) {c : Char} (hc : c ∈ cs) :
+theorem hostName_ascii {cs : List Char} (h : Hostname.Spec.HostName cs) {c : Char} (hc : c ∈ cs) :
     c.toNat ≤ 127 := by
   rcases hostName_mem h hc with hc | rfl
   · exact toNat_le_of_letDigHyp hc
@@ -258,7 +258,7 @@ theorem matchName_ascii_right' (r p : String) (h : ∃ c ∈ p.toList, 127 < c.t
 
 theorem matchName_exact' (r p : String) (hs : '*' ∉ p.toList) :
     matchName r p = true ↔
-      Spec.ExactName p ∧ ∃ name, Spec.Reference r name ∧ Spec.Same name p.toList := by
+      Hostname.Spec.ExactName p ∧ ∃ name, Hostname.Spec.Reference r name ∧ Hostname.Spec.Same name p.toList := by
   rw [matchName_iff']
   constructor
   · rintro ⟨name, hname, ⟨hex, hsame⟩ | ⟨_, _, _, hw, _⟩⟩
@@ -267,7 +267,7 @@ theorem matchName_exact' (r p : String) (hs : '*' ∉ p.toList) :
   · rintro ⟨hex, name, hname, hsame⟩
     exact ⟨name, hname, Or.inl ⟨hex, hsame⟩⟩
 
-theorem matchName_refl' (s : String) (h : Spec.HostName s.toList) : matchName s s = true :=
+theorem matchName_refl' (s : String) (h : Hostname.Spec.HostName s.toList) : matchName s s = true :=
   (matchName_iff' s s).mpr ⟨s.toList, ⟨h, Or.inl rfl⟩, Or.inl ⟨h, same_refl _⟩⟩
 
 theorem matchName_symm' (r p : String) (h : matchName r p = true) (hs : '*' ∉ p.toList)
@@ -294,7 +294,7 @@ theorem matchName_trans' (a b c : String) (hab : matchName a b = true)
       rcases hm with hm | hm
       · exact hostName_star hB.1 hm
       · exact absurd hm (by decide)
-  obtain ⟨hexB, hAB⟩ : Spec.ExactName b ∧ Spec.Same nameA b.toList := by
+  obtain ⟨hexB, hAB⟩ : Hostname.Spec.ExactName b ∧ Hostname.Spec.Same nameA b.toList := by
     rcases hab with h | ⟨_, _, _, hw, _⟩
     · exact h
     · exact absurd (hw.1 ▸ List.mem_cons_self) hbstar

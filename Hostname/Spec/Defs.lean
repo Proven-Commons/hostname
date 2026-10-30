@@ -1,5 +1,5 @@
 /-
-  The definitions the statements in `Spec.lean` use, written from the
+  The definitions the statements in `Hostname/Spec.lean` use, written from the
   standards, separately from the code in `Hostname/`.
 
   - A label is `<label>` of RFC 1034, section 3.5 ("preferred name
@@ -26,7 +26,7 @@
     the reference name's first matches (RFC 9525, section 6.3).
 -/
 
-namespace Spec
+namespace Hostname.Spec
 
 /-! ## Characters -/
 
@@ -107,4 +107,4 @@ def Matches (r p : String) : Prop :=
       (∃ suffix label rest, WildcardName p suffix ∧ name = label ++ '.' :: rest ∧
         Label label ∧ Same rest suffix))
 
-end Spec
+end Hostname.Spec

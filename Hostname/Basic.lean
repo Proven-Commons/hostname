@@ -9,8 +9,8 @@
   label. A name that is not well formed matches nothing.
 
   The definitions work on lists of characters, which suit the proofs.
-  `Spec.lean` states what they compute, from definitions written
-  separately in `Spec/Defs.lean`.
+  `Hostname/Spec.lean` states what they compute, from definitions written
+  separately in `Hostname/Spec/Defs.lean`.
 -/
 
 namespace Hostname

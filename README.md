@@ -23,21 +23,21 @@ From Lean:
 
 ## What is proved
 
-The statements are in `Spec.lean`, the definitions they use in `Spec/Defs.lean`, and the proofs in `Proofs/`.
+The statements are in `Hostname/Spec.lean`, the definitions they use in `Hostname/Spec/Defs.lean`, and the proofs in `Hostname/Proofs/`.
 
 | Claim | Theorem |
 |-------|---------|
-| `matchName r p` is true exactly when `r` and `p` are well formed and `p` matches by RFC 9525, section 6.3. Without a wildcard, `p` is the reference name with ASCII case ignored. With one, the reference name is one label, a dot, and the rest of `p` with ASCII case ignored. | `Spec.matchName_iff` |
-| `validReference` accepts exactly the host names of RFC 1034 and RFC 1123, with or without a trailing dot. `validPresented` accepts exactly the host names, and `*.` before a host name of two or more labels. | `Spec.validReference_iff`, `Spec.validPresented_iff` |
-| `verify` succeeds exactly when some presented identifier matches some reference identifier. | `Spec.verify_iff` |
-| A presented identifier holding `*` matches only when it starts with `*.` and holds no other `*`. | `Spec.wildcard_leftmost_only` |
-| A wildcard stands for exactly one label, never zero or two. | `Spec.wildcard_one_label` |
-| A wildcard over one label, such as `*.com`, matches nothing. | `Spec.wildcard_two_labels` |
-| Changing the ASCII case of either identifier changes no answer. | `Spec.matchName_case_left`, `Spec.matchName_case_right` |
-| An identifier holding a character outside ASCII matches nothing. | `Spec.matchName_ascii_left`, `Spec.matchName_ascii_right` |
-| Without a wildcard, matching is sameness with ASCII case ignored. It is reflexive, symmetric and transitive on such names. | `Spec.matchName_exact`, `Spec.matchName_refl`, `Spec.matchName_symm`, `Spec.matchName_trans` |
-| The examples of RFC 9525 and RFC 6125. The name checks of the x509-limbo suite. Malformed names, the length limits, and pairs loose matchers get wrong. | `Spec.rfc9525_examples`, `Spec.rfc6125_examples`, `Spec.limbo_vectors`, `Spec.reject_vectors`, `Spec.accept_vectors`, `Spec.length_vectors` |
-| The limit below, stated as a theorem: `*.co.uk` matches `example.co.uk`. | `Spec.public_suffix_limit` |
+| `matchName r p` is true exactly when `r` and `p` are well formed and `p` matches by RFC 9525, section 6.3. Without a wildcard, `p` is the reference name with ASCII case ignored. With one, the reference name is one label, a dot, and the rest of `p` with ASCII case ignored. | `Hostname.Spec.matchName_iff` |
+| `validReference` accepts exactly the host names of RFC 1034 and RFC 1123, with or without a trailing dot. `validPresented` accepts exactly the host names, and `*.` before a host name of two or more labels. | `Hostname.Spec.validReference_iff`, `Hostname.Spec.validPresented_iff` |
+| `verify` succeeds exactly when some presented identifier matches some reference identifier. | `Hostname.Spec.verify_iff` |
+| A presented identifier holding `*` matches only when it starts with `*.` and holds no other `*`. | `Hostname.Spec.wildcard_leftmost_only` |
+| A wildcard stands for exactly one label, never zero or two. | `Hostname.Spec.wildcard_one_label` |
+| A wildcard over one label, such as `*.com`, matches nothing. | `Hostname.Spec.wildcard_two_labels` |
+| Changing the ASCII case of either identifier changes no answer. | `Hostname.Spec.matchName_case_left`, `Hostname.Spec.matchName_case_right` |
+| An identifier holding a character outside ASCII matches nothing. | `Hostname.Spec.matchName_ascii_left`, `Hostname.Spec.matchName_ascii_right` |
+| Without a wildcard, matching is sameness with ASCII case ignored. It is reflexive, symmetric and transitive on such names. | `Hostname.Spec.matchName_exact`, `Hostname.Spec.matchName_refl`, `Hostname.Spec.matchName_symm`, `Hostname.Spec.matchName_trans` |
+| The examples of RFC 9525 and RFC 6125. The name checks of the x509-limbo suite. Malformed names, the length limits, and pairs loose matchers get wrong. | `Hostname.Spec.rfc9525_examples`, `Hostname.Spec.rfc6125_examples`, `Hostname.Spec.limbo_vectors`, `Hostname.Spec.reject_vectors`, `Hostname.Spec.accept_vectors`, `Hostname.Spec.length_vectors` |
+| The limit below, stated as a theorem: `*.co.uk` matches `example.co.uk`. | `Hostname.Spec.public_suffix_limit` |
 
 The command-line tool in `Main.lean` answers requests with these functions directly.
 
@@ -85,7 +85,7 @@ lake comparator --paranoid
 python3 tests/run_tests.py
 ```
 
-`lake comparator --paranoid` builds the statements and the proofs in a sandbox. It checks that each theorem in `Proofs/` proves exactly the statement in `Spec.lean`, using only the axioms `propext`, `Classical.choice`, and `Quot.sound`, and replays it through every kernel shipped with Lean.
+`lake comparator --paranoid` builds the statements and the proofs in a sandbox. It checks that each theorem in `Hostname/Proofs/` proves exactly the statement in `Hostname/Spec.lean`, using only the axioms `propext`, `Classical.choice`, and `Quot.sound`, and replays it through every kernel shipped with Lean.
 
 The test script builds the tool and the Go oracle, and loads libcrypto. When Python lacks the pinned pyca/cryptography, it installs it into `.lake/oracle-venv`, checked against the hashes in `tests/oracle-requirements.txt`. It runs these inputs:
 
@@ -100,9 +100,9 @@ It then rewrites `tests/TEST-RESULTS.md`.
 ## Layout
 
 - `Hostname/Basic.lean`: the code under proof.
-- `Spec.lean`: the statements, with `sorry` for proofs. A reviewer approves this file.
-- `Spec/Defs.lean`: the definitions the statements use, written from the RFCs.
-- `Proofs.lean` and `Proofs/`: the proofs, under the same names.
+- `Hostname/Spec.lean`: the statements, with `sorry` for proofs. A reviewer approves this file.
+- `Hostname/Spec/Defs.lean`: the definitions the statements use, written from the RFCs.
+- `Hostname/Proofs.lean` and `Hostname/Proofs/`: the proofs, under the same names.
 - `Main.lean`: the command-line tool the tests drive.
 - `lakefile.toml`: the build. It names the package and its version, its libraries and executable, and the default targets, and sets nothing else.
 - `comparator.json`: which theorems `lake comparator` checks, and which axioms it allows.

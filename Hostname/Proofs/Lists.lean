@@ -4,8 +4,8 @@
 -/
 
 import Hostname
-import Spec.Defs
-import Proofs.Chars
+import Hostname.Spec.Defs
+import Hostname.Proofs.Chars
 
 open Hostname
 
@@ -184,35 +184,35 @@ theorem wildcardSuffix?_map {f : Char → Char} (hd : ∀ c, f c = '.' ↔ c = '
 /-! ## Sameness up to ASCII case -/
 
 theorem same_iff : ∀ {xs ys : List Char},
-    Spec.Same xs ys ↔ xs.map lowerAscii = ys.map lowerAscii
-  | [], [] => by simp [Spec.Same]
-  | [], _ :: _ => by simp [Spec.Same]
-  | _ :: _, [] => by simp [Spec.Same]
+    Hostname.Spec.Same xs ys ↔ xs.map lowerAscii = ys.map lowerAscii
+  | [], [] => by simp [Hostname.Spec.Same]
+  | [], _ :: _ => by simp [Hostname.Spec.Same]
+  | _ :: _, [] => by simp [Hostname.Spec.Same]
   | a :: as, b :: bs => by
-    simp only [Spec.Same, List.map_cons, List.cons.injEq, sameChar_iff, same_iff]
+    simp only [Hostname.Spec.Same, List.map_cons, List.cons.injEq, sameChar_iff, same_iff]
 
-theorem same_refl (xs : List Char) : Spec.Same xs xs := same_iff.mpr rfl
+theorem same_refl (xs : List Char) : Hostname.Spec.Same xs xs := same_iff.mpr rfl
 
-theorem same_symm {xs ys : List Char} (h : Spec.Same xs ys) : Spec.Same ys xs :=
+theorem same_symm {xs ys : List Char} (h : Hostname.Spec.Same xs ys) : Hostname.Spec.Same ys xs :=
   same_iff.mpr (same_iff.mp h).symm
 
-theorem same_trans {xs ys zs : List Char} (h : Spec.Same xs ys) (h' : Spec.Same ys zs) :
-    Spec.Same xs zs :=
+theorem same_trans {xs ys zs : List Char} (h : Hostname.Spec.Same xs ys) (h' : Hostname.Spec.Same ys zs) :
+    Hostname.Spec.Same xs zs :=
   same_iff.mpr ((same_iff.mp h).trans (same_iff.mp h'))
 
-theorem sameIgnoringCase_iff (a b : List Char) : sameIgnoringCase a b = true ↔ Spec.Same a b := by
+theorem sameIgnoringCase_iff (a b : List Char) : sameIgnoringCase a b = true ↔ Hostname.Spec.Same a b := by
   simp [sameIgnoringCase, same_iff]
 
 theorem map_lower_lower (cs : List Char) : (cs.map lowerAscii).map lowerAscii = cs.map lowerAscii := by
   simp [Function.comp_def, lowerAscii_lowerAscii]
 
-theorem same_lower (cs : List Char) : Spec.Same cs (cs.map lowerAscii) :=
+theorem same_lower (cs : List Char) : Hostname.Spec.Same cs (cs.map lowerAscii) :=
   same_iff.mpr (map_lower_lower cs).symm
 
 /-- A list the same as `l ++ '.' :: r` splits at a dot in the same
     place. -/
-theorem same_split {xs l r : List Char} (h : Spec.Same xs (l ++ '.' :: r)) :
-    ∃ l' r', xs = l' ++ '.' :: r' ∧ Spec.Same l' l ∧ Spec.Same r' r := by
+theorem same_split {xs l r : List Char} (h : Hostname.Spec.Same xs (l ++ '.' :: r)) :
+    ∃ l' r', xs = l' ++ '.' :: r' ∧ Hostname.Spec.Same l' l ∧ Hostname.Spec.Same r' r := by
   rw [same_iff, List.map_append, List.map_cons, List.map_eq_append_iff] at h
   obtain ⟨l', t, rfl, hl, ht⟩ := h
   rw [List.map_eq_cons_iff] at ht
@@ -222,7 +222,7 @@ theorem same_split {xs l r : List Char} (h : Spec.Same xs (l ++ '.' :: r)) :
   subst hd'
   exact ⟨l', r', rfl, same_iff.mpr hl, same_iff.mpr hr⟩
 
-theorem same_mem_dot {xs ys : List Char} (h : Spec.Same xs ys) : '.' ∈ xs ↔ '.' ∈ ys := by
+theorem same_mem_dot {xs ys : List Char} (h : Hostname.Spec.Same xs ys) : '.' ∈ xs ↔ '.' ∈ ys := by
   rw [same_iff] at h
   constructor
   · intro hx

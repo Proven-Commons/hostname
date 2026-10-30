@@ -1,16 +1,18 @@
 name = "hostname"
 license = "Apache-2.0"
 version = "0.1.0"
-defaultTargets = ["Hostname", "Spec", "Proofs", "hostname"]
+defaultTargets = ["Hostname", "HostnameSpec", "HostnameProofs", "hostname"]
 
 [[lean_lib]]
 name = "Hostname"
 
 [[lean_lib]]
-name = "Spec"
+name = "HostnameSpec"
+roots = ["Hostname.Spec"]
 
 [[lean_lib]]
-name = "Proofs"
+name = "HostnameProofs"
+roots = ["Hostname.Proofs"]
 
 [[lean_exe]]
 name = "hostname"

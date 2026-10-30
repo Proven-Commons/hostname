@@ -4,7 +4,7 @@
 -/
 
 import Hostname
-import Spec.Defs
+import Hostname.Spec.Defs
 
 open Hostname
 
@@ -13,33 +13,33 @@ namespace Hostname.Proofs
 theorem le_iff_toNat {a b : Char} : a ≤ b ↔ a.toNat ≤ b.toNat := by
   rw [Char.le_def, UInt32.le_iff_toNat_le]; rfl
 
-theorem digit_iff (c : Char) : Spec.Digit c ↔ 48 ≤ c.toNat ∧ c.toNat ≤ 57 := by
-  simp only [Spec.Digit, le_iff_toNat]; rfl
+theorem digit_iff (c : Char) : Hostname.Spec.Digit c ↔ 48 ≤ c.toNat ∧ c.toNat ≤ 57 := by
+  simp only [Hostname.Spec.Digit, le_iff_toNat]; rfl
 
 theorem letter_iff (c : Char) :
-    Spec.Letter c ↔ (97 ≤ c.toNat ∧ c.toNat ≤ 122) ∨ (65 ≤ c.toNat ∧ c.toNat ≤ 90) := by
-  simp only [Spec.Letter, le_iff_toNat]; rfl
+    Hostname.Spec.Letter c ↔ (97 ≤ c.toNat ∧ c.toNat ≤ 122) ∨ (65 ≤ c.toNat ∧ c.toNat ≤ 90) := by
+  simp only [Hostname.Spec.Letter, le_iff_toNat]; rfl
 
 theorem eq_iff_toNat {c d : Char} : c = d ↔ c.toNat = d.toNat := Char.toNat_inj.symm
 
-theorem isDigit_iff (c : Char) : isDigit c = true ↔ Spec.Digit c := by
-  simp [isDigit, Spec.Digit]
+theorem isDigit_iff (c : Char) : isDigit c = true ↔ Hostname.Spec.Digit c := by
+  simp [isDigit, Hostname.Spec.Digit]
 
-theorem isLetDig_iff (c : Char) : isLetDig c = true ↔ Spec.LetDig c := by
-  simp [isLetDig, isDigit, Spec.LetDig, Spec.Letter, Spec.Digit, or_assoc]
+theorem isLetDig_iff (c : Char) : isLetDig c = true ↔ Hostname.Spec.LetDig c := by
+  simp [isLetDig, isDigit, Hostname.Spec.LetDig, Hostname.Spec.Letter, Hostname.Spec.Digit, or_assoc]
 
-theorem isLDH_iff (c : Char) : isLDH c = true ↔ Spec.LetDigHyp c := by
-  simp [isLDH, isLetDig_iff, Spec.LetDigHyp]
+theorem isLDH_iff (c : Char) : isLDH c = true ↔ Hostname.Spec.LetDigHyp c := by
+  simp [isLDH, isLetDig_iff, Hostname.Spec.LetDigHyp]
 
-theorem letDig_iff (c : Char) : Spec.LetDig c ↔
+theorem letDig_iff (c : Char) : Hostname.Spec.LetDig c ↔
     (97 ≤ c.toNat ∧ c.toNat ≤ 122) ∨ (65 ≤ c.toNat ∧ c.toNat ≤ 90) ∨
       (48 ≤ c.toNat ∧ c.toNat ≤ 57) := by
-  simp only [Spec.LetDig, letter_iff, digit_iff, or_assoc]
+  simp only [Hostname.Spec.LetDig, letter_iff, digit_iff, or_assoc]
 
-theorem letDigHyp_iff (c : Char) : Spec.LetDigHyp c ↔
+theorem letDigHyp_iff (c : Char) : Hostname.Spec.LetDigHyp c ↔
     (97 ≤ c.toNat ∧ c.toNat ≤ 122) ∨ (65 ≤ c.toNat ∧ c.toNat ≤ 90) ∨
       (48 ≤ c.toNat ∧ c.toNat ≤ 57) ∨ c.toNat = 45 := by
-  show Spec.LetDig c ∨ c = '-' ↔ _
+  show Hostname.Spec.LetDig c ∨ c = '-' ↔ _
   rw [letDig_iff, eq_iff_toNat]
   show _ ∨ c.toNat = 45 ↔ _
   constructor <;> intro h <;> omega
@@ -48,14 +48,14 @@ theorem toNat_dot : '.'.toNat = 46 := rfl
 theorem toNat_star : '*'.toNat = 42 := rfl
 theorem toNat_hyphen : '-'.toNat = 45 := rfl
 
-theorem not_letDigHyp_dot : ¬ Spec.LetDigHyp '.' := by decide
-theorem not_letDigHyp_star : ¬ Spec.LetDigHyp '*' := by decide
-theorem not_letDig_star : ¬ Spec.LetDig '*' := by decide
-theorem not_letDig_dot : ¬ Spec.LetDig '.' := by decide
-theorem letDig_letDigHyp {c : Char} (h : Spec.LetDig c) : Spec.LetDigHyp c := Or.inl h
+theorem not_letDigHyp_dot : ¬ Hostname.Spec.LetDigHyp '.' := by decide
+theorem not_letDigHyp_star : ¬ Hostname.Spec.LetDigHyp '*' := by decide
+theorem not_letDig_star : ¬ Hostname.Spec.LetDig '*' := by decide
+theorem not_letDig_dot : ¬ Hostname.Spec.LetDig '.' := by decide
+theorem letDig_letDigHyp {c : Char} (h : Hostname.Spec.LetDig c) : Hostname.Spec.LetDigHyp c := Or.inl h
 
 /-- A letter, digit, hyphen or dot is ASCII. -/
-theorem toNat_le_of_letDigHyp {c : Char} (h : Spec.LetDigHyp c) : c.toNat ≤ 127 := by
+theorem toNat_le_of_letDigHyp {c : Char} (h : Hostname.Spec.LetDigHyp c) : c.toNat ≤ 127 := by
   rw [letDigHyp_iff] at h; omega
 
 /-! ## ASCII lower case -/
@@ -82,9 +82,9 @@ theorem lower_cases (c : Char) :
     refine Or.inr ⟨h, ?_⟩
     simp only [h', Bool.false_eq_true, ↓reduceIte]
 
-theorem sameChar_iff (a b : Char) : Spec.SameChar a b ↔ lowerAscii a = lowerAscii b := by
+theorem sameChar_iff (a b : Char) : Hostname.Spec.SameChar a b ↔ lowerAscii a = lowerAscii b := by
   rw [eq_iff_toNat (c := lowerAscii a)]
-  simp only [Spec.SameChar, le_iff_toNat, eq_iff_toNat (c := a)]
+  simp only [Hostname.Spec.SameChar, le_iff_toNat, eq_iff_toNat (c := a)]
   show _ ∨ (65 ≤ a.toNat ∧ a.toNat ≤ 90 ∧ _) ∨ (65 ≤ b.toNat ∧ b.toNat ≤ 90 ∧ _) ↔ _
   rcases lower_cases a with ha | ha <;> rcases lower_cases b with hb | hb <;>
     constructor <;> intro h <;> omega
